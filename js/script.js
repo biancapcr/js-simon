@@ -33,9 +33,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mostro subito i numeri
   showNumbers();
 
-   // Imposto il countdown a 30 secondi
+  // Imposto il countdown a 30 secondi
   let timeLeft = 30;
-
   // Visualizzo subito il valore iniziale sul timer
   countdownEl.textContent = timeLeft;
+ // Avvio il timer: ogni secondo decrementa e aggiorna il DOM
+ const timerInterval = setInterval(() => {
+    timeLeft--;
+    countdownEl.textContent = timeLeft;
+    if (timeLeft === 20) {
+      // Nascondi i numeri
+      numbersList.classList.add('d-none');
+      instructions.textContent = 'Inserisci i numeri che hai visto';
+      // Mostra il form
+      form.classList.remove('d-none');
+    }
+    // Quando il timer termina (0 s), fermo tutto e valuto
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      evaluateAnswers(); 
+    }
+  }, 1000);
 });
