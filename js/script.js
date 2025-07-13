@@ -54,4 +54,29 @@ document.addEventListener('DOMContentLoaded', () => {
       evaluateAnswers(); 
     }
   }, 1000);
+  // Chiarire eventuali messaggi e classi di errore
+  function clearValidation() {
+    messageEl.textContent = '';
+    inputs.forEach(i => i.classList.remove('is-invalid'));
+  }
+  // Controlla vuoti, range e duplicati
+  function validateInputs(values) {
+      // Vuoti o non-numeri
+    if (values.some(v => v.trim() === '' || isNaN(v))) {
+      messageEl.textContent = 'Inserisci numeri validi.';
+      return false;
+    }
+    const nums = values.map(v => Number(v));
+      // Fuori range 1–50
+    if (nums.some(n => n < 1 || n > 50)) {
+      messageEl.textContent = 'I numeri devono essere tra 1 e 50.';
+      return false;
+    }
+      // Duplicati
+    if (new Set(nums).size < nums.length) {
+      messageEl.textContent = 'Non puoi inserire numeri ripetuti.';
+      return false;
+    }
+    return true;
+  }
 });
