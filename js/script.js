@@ -13,4 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Il paragrafo per i messaggi di errore (validazione)
   const messageEl = document.getElementById('message');
 
+  // Genero 5 numeri casuali da 1 a 50
+  const randomNumbers = [];
+  while (randomNumbers.length < 5) {
+    const n = Math.floor(Math.random() * 50) + 1;
+    if (!randomNumbers.includes(n)) {
+      randomNumbers.push(n);
+    }
+  }
+
 });
