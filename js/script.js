@@ -14,13 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageEl = document.getElementById('message');
 
   // Genero 5 numeri casuali da 1 a 50
-  const randomNumbers = [];
-  while (randomNumbers.length < 5) {
-    const n = Math.floor(Math.random() * 50) + 1;
-    if (!randomNumbers.includes(n)) {
-      randomNumbers.push(n);
-    }
-  }
+  const randomNumbers = Array.from({ length: 5 }, () =>
+    Math.floor(Math.random() * 50) + 1
+  );
   // Funzione che mostra i numeri nella <ul>
   function showNumbers() {
     // Svuoto la lista
