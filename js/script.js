@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     randomNumbers.forEach(num => {
       const li = document.createElement('li');
       li.textContent = num;
+      li.classList.add('fs-2', 'fw-bold');
     });
   }
    // Nascondi il form all’inizio
@@ -31,4 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mostro subito i numeri
   showNumbers();
+
+   // Imposto il countdown a 30 secondi
+  let timeLeft = 30;
+
+  // Visualizzo subito il valore iniziale sul timer
+  countdownEl.textContent = timeLeft;
 });
