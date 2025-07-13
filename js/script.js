@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const numbersList = document.getElementById('numbers-list');
   // Il form che contiene gli input per le risposte
   const form = document.getElementById('answers-form');
+  // Disabilito la validazione nativa HTML5 (per usare solo la nostra)
+  form.setAttribute('novalidate', true);
   // Gli input di tipo number dentro al form
   const inputs = form.querySelectorAll('input[type="number"]');
   // Il paragrafo per i messaggi di errore (validazione)
@@ -17,82 +19,90 @@ document.addEventListener('DOMContentLoaded', () => {
   const randomNumbers = Array.from({ length: 5 }, () =>
     Math.floor(Math.random() * 50) + 1
   );
+
   // Funzione che mostra i numeri nella <ul>
   function showNumbers() {
     // Svuoto la lista
-    numbersList.innerHTML = '';             
+    numbersList.innerHTML = '';
     randomNumbers.forEach(num => {
       const li = document.createElement('li');
       li.textContent = num;
       li.classList.add('fs-2', 'fw-bold');
+      numbersList.appendChild(li);
     });
   }
-   // Nascondi il form all’inizio
-  form.classList.add('d-none');
 
+  // Nascondi il form all’inizio
+  form.classList.add('d-none');
   // Mostro subito i numeri
   showNumbers();
 
-  // Imposto il countdown a 30 secondi
-  let timeLeft = 30;
+  // Avvio countdown da 10s
+  let timeLeft = 10;
   // Visualizzo subito il valore iniziale sul timer
   countdownEl.textContent = timeLeft;
- // Avvio il timer: ogni secondo decrementa e aggiorna il DOM
- const timerInterval = setInterval(() => {
+  const timerInterval = setInterval(() => {
     timeLeft--;
     countdownEl.textContent = timeLeft;
-    if (timeLeft === 20) {
-      // Nascondi i numeri
-      numbersList.classList.add('d-none');
-      instructions.textContent = 'Inserisci i numeri che hai visto';
-      // Mostra il form
-      form.classList.remove('d-none');
-    }
-    // Quando il timer termina (0 s), fermo tutto e valuto
+
     if (timeLeft <= 0) {
+      // 10 secondi passati: fermo il timer e passo al form
       clearInterval(timerInterval);
-      evaluateAnswers(); 
+      numbersList.classList.add('d-none');
+      instructions.textContent = 'Ora inserisci i numeri che hai visto';
+      form.classList.remove('d-none');
+      countdownEl.textContent = '';
     }
   }, 1000);
-  // Chiarire eventuali messaggi e classi di errore
+
+  // Pulisce eventuali messaggi e classi di errore
   function clearValidation() {
     messageEl.textContent = '';
     inputs.forEach(i => i.classList.remove('is-invalid'));
   }
-  // Controlla vuoti, range e duplicati
-  function validateInputs(values) {
-      // Vuoti o non-numeri
-    if (values.some(v => v.trim() === '' || isNaN(v))) {
-      messageEl.textContent = 'Inserisci numeri validi.';
-      return false;
-    }
-    const nums = values.map(v => Number(v));
-      // Fuori range 1–50
-    if (nums.some(n => n < 1 || n > 50)) {
-      messageEl.textContent = 'I numeri devono essere tra 1 e 50.';
-      return false;
-    }
-      // Duplicati
-    if (new Set(nums).size < nums.length) {
-      messageEl.textContent = 'Non puoi inserire numeri ripetuti.';
-      return false;
-    }
-    return true;
-  }
-   // Valuta le risposte, usando clearValidation() e validateInputs()
-  function evaluateAnswers() { 
-    // Pulisco errori precedenti
+
+  // Controlla vuoti e range
+  function validateInputs() {
     clearValidation();
-    // Prendo tutti i valori                                       
-    const values = Array.from(inputs).map(i => i.value);      
-    // Se la validazione fallisce, evidenzio gli input e esco
-    if (!validateInputs(values)) {
-      inputs.forEach(i => i.classList.add('is-invalid'));
-      return;
+    let valid = true;
+
+    inputs.forEach((input, i) => {
+      const v = input.value.trim();
+      if (v === '' || isNaN(v) || Number(v) < 1 || Number(v) > 50) {
+        input.classList.add('is-invalid');
+        valid = false;
+      }
+    });
+
+    if (!valid) {
+      messageEl.textContent = 'Per favore inserisci numeri validi (1–50).';
     }
+
+    return valid;
+  }
+
+  // Valuta le risposte, usando clearValidation() e validateInputs()
+  function evaluateAnswers() {
+    // Ferma subito ogni timer residuo
+    clearInterval(timerInterval);
+    // Se la validazione fallisce, evidenzio i campi e esco
+    if (!validateInputs()) return;
+
     // Altrimenti trasformo in numeri e filtro i corretti
-    const nums = values.map(v => Number(v));
-    // Ricavo i corretti, eliminando duplicati con indexOf
-    const correct = nums.filter((n, i) => 
-        randomNumbers.includes(n) && nums.indexOf(n) === i );
+    const nums = Array.from(inputs).map(i => Number(i.value.trim()));
+    const correct = nums.filter((n, i) =>
+      randomNumbers.includes(n) && nums.indexOf(n) === i
+    );
+
+    // Mostro il risultato nella sezione istruzioni
+    instructions.textContent = `Hai indovinato ${correct.length} ${correct.length === 1 ? 'numero' : 'numeri'}: ` +
+  (correct.length ? correct.join(', ') : '—');
+    // Nascondo il form
+    form.classList.add('d-none');
+  }
+    // Gestione form
+    form.addEventListener('submit', e => {
+    e.preventDefault();
+    evaluateAnswers();
+  });
 });
