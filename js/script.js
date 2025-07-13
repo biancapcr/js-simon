@@ -21,5 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
       randomNumbers.push(n);
     }
   }
+  // Funzione che mostra i numeri nella <ul>
+  function showNumbers() {
+    // Svuoto la lista
+    numbersList.innerHTML = '';             
+    randomNumbers.forEach(num => {
+      const li = document.createElement('li');
+      li.textContent = num;
+    });
+  }
+   // Nascondi il form all’inizio
+  form.classList.add('d-none');
 
+  // Mostro subito i numeri
+  showNumbers();
 });
