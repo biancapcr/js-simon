@@ -79,4 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return true;
   }
+   // Valuta le risposte, usando clearValidation() e validateInputs()
+  function evaluateAnswers() { 
+    // Pulisco errori precedenti
+    clearValidation();
+    // Prendo tutti i valori                                       
+    const values = Array.from(inputs).map(i => i.value);      
+    // Se la validazione fallisce, evidenzio gli input e esco
+    if (!validateInputs(values)) {
+      inputs.forEach(i => i.classList.add('is-invalid'));
+      return;
+    }
+    // Altrimenti trasformo in numeri e filtro i corretti
+    const nums = values.map(v => Number(v));
+    // Ricavo i corretti, eliminando duplicati con indexOf
+    const correct = nums.filter((n, i) => 
+        randomNumbers.includes(n) && nums.indexOf(n) === i );
 });
