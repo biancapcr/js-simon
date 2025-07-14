@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const numbersList = document.getElementById('numbers-list');
   // Il form che contiene gli input per le risposte
   const form = document.getElementById('answers-form');
-  // Disabilito la validazione nativa HTML5 (per usare solo la nostra)
   form.setAttribute('novalidate', true);
   // Gli input di tipo number dentro al form
   const inputs = form.querySelectorAll('input[type="number"]');
@@ -75,9 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (!valid) {
-      messageEl.textContent = 'Per favore inserisci numeri validi (1–50).';
+      messageEl.textContent = 'Per favore inserisci numeri validi (1-50).';
     }
-
     return valid;
   }
 
